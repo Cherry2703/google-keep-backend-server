@@ -52,8 +52,9 @@ app.post('/sign-up/', async (request, response) => {
     if (userResult === undefined) {
       const newUserId = uuidv4();
       const hashedPassword = await bcrypt.hash(password, 10);
-      const query = `INSERT INTO users(user_id, username, email, password)
-                     VALUES('${newUserId}', '${username}', '${email}', '${hashedPassword}');`;
+      const createdTime=new Date().toLocaleString()
+      const query = `INSERT INTO users(user_id, username, email, password,created_at)
+                     VALUES('${newUserId}', '${username}', '${email}', '${hashedPassword}','${createdTime}');`;
       await db.run(query);
       response.send({ message: 'User Created Successfully' });
     } else {
@@ -131,10 +132,6 @@ This is the backend API for a Google Keep-like application, built using Express.
   
 
 
-
-
-
-
 Go FOR GIT HUB LINK AND READ THE README FILE FOR THE COMPLETE INFORMATION....... THANK YOU.....
 
 
@@ -173,6 +170,9 @@ app.post('/notes/', authenticateJwtToken, async (request, response) => {
     response.status(500).send({ message: `Internal Server Error: ${error.message}` });
   }
 });
+
+
+
 
 // Update an existing note
 app.put('/notes/', authenticateJwtToken, async (request, response) => {
