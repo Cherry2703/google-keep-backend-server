@@ -154,6 +154,30 @@ app.get('/notes/', authenticateJwtToken, async (request, response) => {
   }
 });
 
+app.get('/trash/', authenticateJwtToken, async (request, response) => {
+  try {
+    const { username } = request;
+    const userDetails = await checkUserExistsOrNot(username);
+    const allNotes = `SELECT * FROM notes WHERE user_id='${userDetails.user_id}' AND is_deleted=1 AND is_archived=0;`;
+    const notes = await db.all(allNotes);
+    response.send(notes);
+  } catch (error) {
+    response.status(500).send({ message: `Internal Server Error: ${error.message}` });
+  }
+});
+
+app.get('/archieve/', authenticateJwtToken, async (request, response) => {
+  try {
+    const { username } = request;
+    const userDetails = await checkUserExistsOrNot(username);
+    const allNotes = `SELECT * FROM notes WHERE user_id='${userDetails.user_id}' AND is_deleted=0 AND is_archived=1;`;
+    const notes = await db.all(allNotes);
+    response.send(notes);
+  } catch (error) {
+    response.status(500).send({ message: `Internal Server Error: ${error.message}` });
+  }
+});
+
 // Add a new note based on user
 app.post('/notes/', authenticateJwtToken, async (request, response) => {
   try {
